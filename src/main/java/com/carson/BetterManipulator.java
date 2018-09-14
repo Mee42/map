@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BetterManipulator {
     private static final int lineThickness = 3;
@@ -121,6 +123,16 @@ public class BetterManipulator {
 
     public static File getFile(String str){
         return new File("img/cache/" + str + ".png");
+    }
+
+
+
+    public static java.util.List<State> toList(State s){
+        return new ArrayList<>(Arrays.asList(s));
+    }
+
+    public static java.util.List<State> toLine(State...s){
+        return new ArrayList<>(Arrays.asList(s));
     }
 
 
