@@ -7,11 +7,15 @@ import static com.carson.State.*;
 public class Database {
     private static Map<State,Integer> states = new HashMap<>();
     private static Map<State, Pair<Integer,Integer>> stateCords = new HashMap<>();
+    private static Map<State, Pair<Integer,Integer>> cordAdjustments = new HashMap<>();
     private static Map<Integer,Integer> allConnections = new HashMap<>();
     private static Map<Integer,Integer> connections = new HashMap<>();//the working connections
+
+
     static{
         initializeStates();
         initializeConnections();
+        initializeAdjustments();
     }
 
     private static void initializeStates(){
@@ -25,7 +29,7 @@ public class Database {
 
     private static void initializeCords() {
         stateCords.put(State.AL, new Pair<>(1292, 842));
-        stateCords.put(State.AK, new Pair<>(57, 902));
+        stateCords.put(State.AK, new Pair<>(39,64));
         stateCords.put(State.AZ, new Pair<>(363, 749));
         stateCords.put(State.AR, new Pair<>(1074, 779));
         stateCords.put(State.CA, new Pair<>(105, 575));
@@ -35,7 +39,7 @@ public class Database {
         stateCords.put(State.DC, new Pair<>(1590, 535));//1597, 529
         stateCords.put(State.FL, new Pair<>(1499, 988));
         stateCords.put(State.GA, new Pair<>(1423, 845));
-        stateCords.put(State.HI, new Pair<>(87, 1071));
+        stateCords.put(State.HI, new Pair<>(61,904));
         stateCords.put(State.ID, new Pair<>(353, 316));
         stateCords.put(State.IL, new Pair<>(1182, 535));
         stateCords.put(State.IN, new Pair<>(1285, 524));
@@ -72,7 +76,7 @@ public class Database {
         stateCords.put(State.VT,new Pair<>(1695,268));
         stateCords.put(State.VA,new Pair<>(1584,591));
         stateCords.put(State.WA,new Pair<>(213,118));
-        stateCords.put(State.VV,new Pair<>(1480,568));
+        stateCords.put(State.WV,new Pair<>(1480,568));
         stateCords.put(State.WI,new Pair<>(1144,332));
         stateCords.put(State.WY,new Pair<>(579,380));
 
@@ -86,10 +90,59 @@ public class Database {
 
     }
 
+    private static void initializeAdjustments() {
+        adjust(OK, 0, -35);
+        adjust(TN, -50, 0);
+        adjust(MS, 0, -20);
+        adjust(GA, -20,-10);
+        adjust(SC, 10, 0);
+        adjust(OH, 0, -20);
+        adjust(PA, -40, 0);
+        adjust(ME, -30, -5);
+        adjust(VT, -30, 0);
+        adjust(NH, 0, 20);
+        adjust(MA, 0, 10);
+        adjust(RI,0,15);
+        adjust(CT,0,30);
+        adjust(SD,0,-10);
+        adjust(CO,0,-20);
+        adjust(UT,20,0);
+        adjust(NV,20,5);
+        adjust(CA,-60,15);
+        adjust(ID,-15,-10);
+        adjust(MI,-25,0);
+        adjust(DC,0,20);
+    }
+
+    private static void adjust(State s, int x, int y){
+        cordAdjustments.put(s,new Pair<>(x,y));
+    }
 
     //done states
     public static List<State> done(){
         return Arrays.asList(WA,OR,ID,CA,NV,MT,WY,UT,AZ,ND,SD,NM,CO,OK);
+    }
+
+    public static List<State> connectedButNotDone(){
+        List<State> states = new ArrayList<>(Arrays.asList(State.values()));
+        for(State state : done()){
+            states.remove(state);
+        }
+
+        for(int i = 0;i< states.size();i++){
+            if(getConnections(states.get(i)).size() == 0){
+                states.remove(i);
+                i--;
+            }
+        }
+        return states;
+    }
+
+    public static List<State> getAllConnectedStates(){
+        List<State> all = new ArrayList<>();
+        all.addAll(done());
+        all.addAll(connectedButNotDone());
+        return all;
     }
 
     private static void initializeConnections(){
@@ -166,12 +219,56 @@ public class Database {
         addConnection(OK,KS,209);
         addConnection(OK,MO,240);
 
+
+
+        //extra stuff
+        addConnection(MN,WI,351);
+        addConnection(MN,IL,497);
+        addConnection(IL,IN,173);
+        addConnection(IN,MI,529);
+        addConnection(IN,OH,515);
+        addConnection(OH,PA,303);
+        addConnection(PA,NY,169);
+        addConnection(AR,LA,410);
+        addConnection(AR,MS,241);
+        addConnection(MS,AL,145);
+        addConnection(AL,GA,234);
+        addConnection(GA,FL,322);
+        addConnection(GA,SC,153);
+        addConnection(SC,NC,180);
+        addConnection(NC,VA,119);
+        addConnection(VA,WV,126);
+        addConnection(NC,TN,425);
+        addConnection(TN,KY,205);
+        addConnection(VA,DC,134);
+        addConnection(VA,MD,156);
+        addConnection(PA,NJ,166);
+        addConnection(MD,DE,60);
+        addConnection(NY,CT,77);
+        addConnection(CT,RI,83);
+        addConnection(CT,MA,103);
+        addConnection(MA,NH,55);
+        addConnection(NH,VT,106);
+        addConnection(NH,ME,177);
+        addConnection(MD,PA,152);
+
+
+
+        //to offshore states
+        addConnection(HI,CA,2300);
+        addConnection(AK,WA,1565);
+
     }
 
     private static void addConnection(State a, State b,int distance){
         allConnections.put( genPrime(a,b),distance);
     }
 
+
+    public static boolean isConnectedToMap(State s){
+        boolean connected = getAllConnectedStates().contains(s);
+        return connected;
+    }
 
 
 
@@ -196,6 +293,17 @@ public class Database {
     public static Pair<Integer,Integer> getCords(State s){
         return stateCords.get(s);
     }
+
+    public static Pair<Integer,Integer> getAdjustedCords(State s){
+        if(!cordAdjustments.containsKey(s)){
+            return getCords(s);
+        }
+        Pair<Integer,Integer> cords = getCords(s);
+        Pair<Integer,Integer> adj = cordAdjustments.get(s);
+        Pair<Integer,Integer> result = new Pair<>(cords.a+adj.a,cords.b+adj.b);
+        return result;
+    }
+
 
     private static int genPrime(State a, State b) {
         return states.get(a)*states.get(b);

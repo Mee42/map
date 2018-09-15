@@ -10,9 +10,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class BetterManipulator {
+public class ImageManipulator {
     private static final int lineThickness = 3;
     public static void clearCache(){
+        new File("img/cache/").mkdirs();
         for(File f : new File("img/cache/").listFiles()){
             f.delete();
         }
@@ -28,7 +29,7 @@ public class BetterManipulator {
 
     public static final String CACHE = "cache";
 
-    private static void run(Color c,String from,String to, I i) throws IOException {
+    public static void run(Color c,String from,String to, I i) throws IOException {
         BufferedImage im;
         Graphics2D g2;
 
