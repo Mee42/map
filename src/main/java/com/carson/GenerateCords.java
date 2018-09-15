@@ -41,4 +41,6 @@ public class GenerateCords {
 
         frame.setVisible(true);
     }
+
+
 }

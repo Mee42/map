@@ -1,4 +1,4 @@
-package two.com.carson.files;
+package lib.com.carson;
 
 
 
@@ -120,11 +120,11 @@ public abstract class Database<T extends Enum<T>> {
         return connections;
     }
 
-    public int getId(T state) {
-        return nodes.get(state);
+    public int getId(T t) {
+        return nodes.get(t);
     }
 
-    public Map<T, Integer> getStates() {
+    public Map<T, Integer> getNodes() {
         return nodes;
     }
 
@@ -149,5 +149,13 @@ public abstract class Database<T extends Enum<T>> {
             }
         }
         return nodes;
+    }
+
+    public List<T> getEnumValues(){
+        return Arrays.asList(enumClass.getEnumConstants());
+    }
+
+    public Class<?> getTClass(){
+        return enumClass;
     }
 }
