@@ -3,24 +3,20 @@ package with.lib.com.carson.states;
 
 import lib.com.carson.Database;
 import lib.com.carson.Pair;
+import lib.com.carson.Path;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 
 import static with.lib.com.carson.states.State.*;
-import static lib.com.carson.EvenBetterManipulator.*;
+import static lib.com.carson.AdvancedManipulator.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         Database<State> db = genDB();
-        copy("../map",CACHE);
-        mapAllConnections(db, Color.GRAY,CACHE,CACHE);
-        map(db,Color.BLACK, Arrays.asList(VA,MD,PA),CACHE,CACHE);
-        printAll(db,Color.BLACK,CACHE,CACHE);
-        print(db,Color.CYAN,Arrays.asList(VA,WV,PA,TX,CA),CACHE,CACHE);
-        addLabels(db,CACHE,CACHE);
-        copy(CACHE,"final");
+        Path<State> path = Path.goFrom(db,VA,CA);
+        printNormalMap(db,path,"../map","final");
     }
 
     private static Database<State> genDB(){

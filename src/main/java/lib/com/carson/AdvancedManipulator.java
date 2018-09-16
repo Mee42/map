@@ -8,7 +8,7 @@ import java.util.List;
 
 import static java.awt.Color.BLACK;
 
-public class EvenBetterManipulator extends GenericManipulator{
+public class AdvancedManipulator extends GenericManipulator implements CacheHelper {
 
 
 
@@ -71,17 +71,37 @@ public class EvenBetterManipulator extends GenericManipulator{
     }
 
 
+
+
+
+
     /**
      * is not properly tested...
      */
     public static <T extends Enum<T>> void addLabels(Database<T> db, String from, String to) throws IOException {
-        run(BLACK,CACHE,CACHE,(im, g2, c) -> {
+        run(BLACK,from,to,(im, g2, c) -> {
             g2.setFont(new Font("TimesRoman", Font.PLAIN, 25));
             for(T t : db.getEnumValues()){
                 Pair<Integer,Integer> cords = db.getAdjustedCords(t);
                 g2.drawString(t + "",cords.a+10,cords.b-10);
             }
         });
+    }
+
+
+    /**
+     * This will wipe the cache. be prepared
+     */
+    public static <T extends Enum<T>> void printNormalMap(Database<T> db,Path<T> path, String from, String to) throws IOException{
+        copy(from,CACHE);
+        mapAllConnections(db, Color.GRAY,CACHE,CACHE);
+        map(db,Color.CYAN,path.getNodes(),CACHE,CACHE);
+        printAll(db,Color.BLACK,CACHE,CACHE);
+        print(db,Color.GREEN.darker(),path.getStartingNodeList(),CACHE,CACHE);
+        print(db,Color.RED,path.getLastNodeList(),CACHE,CACHE);
+        addLabels(db,CACHE,CACHE);
+        copy(CACHE,to);
+
     }
 
 

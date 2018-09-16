@@ -5,13 +5,11 @@ import lib.com.carson.Pair;
 import lib.com.carson.Path;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static java.awt.Color.*;
 import static java.awt.Color.RED;
-import static lib.com.carson.EvenBetterManipulator.*;
+import static lib.com.carson.AdvancedManipulator.*;
 import static with.lib.com.carson.states.State.*;
 
 public class Mapper {
@@ -43,21 +41,10 @@ public class Mapper {
             System.out.println("path found:" + quickest);
             System.out.println("the distance is " + quickest.distance() + " miles");
             System.out.println("mapping to final_" + index);
-            normalMap(db,quickest, "final_" + index);
+            printNormalMap(db,quickest,"../map","final_" + index);
             index++;
         }
     }
-
-    public static <T extends Enum<T>> void normalMap(Database<T> db,Path path, String to) throws IOException {
-        copy("../map",CACHE);
-        mapAllConnections(db,BLACK,CACHE,CACHE);
-        map(db,YELLOW, path.getNodes(), CACHE, CACHE);
-        printAll(db,CYAN,CACHE,CACHE);
-        print(db,GREEN, path.getStartingNodeList(), CACHE, CACHE);
-        print(db,RED, path.getLastNodeList(), CACHE, CACHE);
-        copy(CACHE, to);
-    }
-
 
     private static State readState(Database<State> db){
         while(true) {
